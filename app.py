@@ -1551,7 +1551,7 @@ def get_and_post_fuel_invoice():
 
 @app.route('/invoicepayment', methods=['GET', 'POST'])
 @jwt_required()
-@cross_origin(supports_credentials=True, origins=["https://staffmaingibooks.netlify.app", "https://adminmaingibook.netlify.app",  "http://localhost:4000"])
+@cross_origin(supports_credentials=True, origins=["https://demoobooks.netlify.app", "http://localhost:4000"])
 def get_and_post_invoice_paymentss():
     if request.method == "GET":
         customer_name = request.args.get("customer_name")

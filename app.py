@@ -2191,6 +2191,13 @@ def get_and_post_inventory_bill():
 
             new_bill.items.append(new_item)
 
+            # Check if store exists
+            if not store:
+                return jsonify({'error': 'No Store is provided for the bill'}), 400
+            
+            # Check if measurement exists
+            if not measurement:
+                return jsonify({'error': 'No measurement is provided for the bill'}), 400
 
              # **Highlighted Section**
             stock = StockItem.query.filter_by(item_details=item_details, measurement=measurement, store=store).first()

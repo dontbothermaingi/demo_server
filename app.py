@@ -1548,27 +1548,29 @@ def get_and_post_fuel_invoice():
             db.session.rollback()
             app.logger.error(f"Failed to create invoice: {str(e)}")
             return jsonify({'error': f'Failed to create Invoice: {str(e)}'}), 500
-        
+
 @app.route('/invoicepayment', methods=['GET', 'POST'])
 @jwt_required()
-@cross_origin(supports_credentials=True, origins=["https://demoobooks.netlify.app", "http://localhost:4000"])
-def get_and_post_invoicepayments():
-    if request.method == 'GET':
-        customer_name = request.args.get('customer_name')
-        status = request.args.get('status')
+@cross_origin(supports_credentials=True, origins=["https://staffmaingibooks.netlify.app", "https://adminmaingibook.netlify.app",  "http://localhost:4000"])
+def get_and_post_invoice_paymentss():
+    if request.method == "GET":
+        customer_name = request.args.get("customer_name")
 
-        query = db.session.query(NewInvoice)
+        invoices = NewInvoice.query.filter(
+            NewInvoice.customer_name.ilike(customer_name),
+            NewInvoice.status.in_(['UNPAID', 'PARTIALLY PAID'])
+        ).order_by(
+            case(
+                (NewInvoice.status == 'PARTIALLY PAID', 1),
+                (NewInvoice.status == 'UNPAID', 2),
+                else_=3 # Any other status goes last
+            )
+        ).all()
 
-        if customer_name:
-            query = query.filter(NewInvoice.customer_name.ilike(f'%{customer_name}%'))
-
-        if status:
-            status_list = status.split(',')
-            query = query.filter(NewInvoice.status.in_(status_list))
-
-        invoices = query.all()
-
-        return jsonify([invoice.to_dict() for invoice in invoices]), 200
+        if not invoices:
+            return jsonify({"Message": "No invoices for this customer were found"}), 400
+        
+        return jsonify([invoice.to_dict() for invoice in invoices]),200
 
 @app.route('/invoices', methods=['GET', 'POST'])
 @jwt_required()

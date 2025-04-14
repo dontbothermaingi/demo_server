@@ -42,7 +42,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'default_jwt_secret_k
 jwt = JWTManager(app)
 
 # Refresh Token
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=13)  # Access token expires in 1 hour
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=13)  # Access token expires in 13 hours
 JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=15)
 
 
